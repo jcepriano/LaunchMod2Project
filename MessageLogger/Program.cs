@@ -34,6 +34,9 @@ while (userInput.ToLower() != "quit")
 
         userInput = Console.ReadLine();
         Console.WriteLine();
+        
+        // Create instance of message class and add user input
+        // Add messages to the message context and save changes
     }
 
     Console.Write("Would you like to log in a `new` or `existing` user? Or, `quit`? ");
@@ -49,6 +52,8 @@ while (userInput.ToLower() != "quit")
         Console.Write("Add a message: ");
 
         userInput = Console.ReadLine();
+        // Create instance of user class and add the user input to the user
+        // Add the room to the room context and save changes
 
     }
     else if (userInput.ToLower() == "existing")
