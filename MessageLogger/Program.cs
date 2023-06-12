@@ -1,18 +1,23 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using MessageLogger.Data;
 using MessageLogger.Models;
+using Microsoft.EntityFrameworkCore;
 
 using (var context = new MessageLoggerContext())
 {
 
     Console.WriteLine("Welcome to Message Logger!");
     Console.WriteLine();
-    Console.WriteLine("Let's create a user pofile for you.");
+    Console.WriteLine("Let's create a user profile for you.");
     Console.Write("What is your name? ");
     string name = Console.ReadLine();
     Console.Write("What is your username? (one word, no spaces!) ");
     string username = Console.ReadLine();
     User user = new User(name, username);
+    context.Users.Add(user);
+    context.SaveChanges();
+
+    user = context.Users.Single(u => u.Username == username);
 
     Console.WriteLine();
     Console.WriteLine("To log out of your user profile, enter `log out`.");
@@ -21,17 +26,18 @@ using (var context = new MessageLoggerContext())
     Console.Write("Add a message (or `quit` to exit): ");
 
     string userInput = Console.ReadLine();
-    List<User> users = new List<User>() { user };
+    //List<User> users = new List<User>() { user };
 
     while (userInput.ToLower() != "quit")
     {
         while (userInput.ToLower() != "log out")
         {
             user.Messages.Add(new Message(userInput));
+            context.SaveChanges();
 
-            foreach (var message in context.Messages)
+            foreach (var messages in user.Messages)
             {
-                Console.WriteLine($"{user.Name} {message.CreatedAt:t}: {message.Content}");
+                Console.WriteLine($"{user.Name} {messages.CreatedAt:t}: {messages.Content}");
             }
 
             Console.Write("Add a message: ");
@@ -39,9 +45,8 @@ using (var context = new MessageLoggerContext())
             userInput = Console.ReadLine();
             Console.WriteLine();
 
-            Message newMessage = new Message(userInput);
-            context.Messages.Add(newMessage);
-            context.SaveChanges();
+            //Message newMessage = new Message(userInput);
+            //context.Messages.Add(newMessage);
 
             // Create instance of message class and add user input
             // Add messages to the message context and save changes
@@ -56,14 +61,15 @@ using (var context = new MessageLoggerContext())
             Console.Write("What is your username? (one word, no spaces!) ");
             username = Console.ReadLine();
             user = new User(name, username);
-            users.Add(user);
+            //users.Add(user);
             Console.Write("Add a message: ");
 
             userInput = Console.ReadLine();
 
-            User newUser = new User(name, username);
-            context.Users.Add(newUser);
+            //User newUser = new User(name, username);
+            context.Users.Add(user);
             context.SaveChanges();
+            user = context.Users.Single(u => u.Username == username);
 
             // Create instance of user class and add the user input to the user
             // Add the room to the room context and save changes
@@ -98,7 +104,7 @@ using (var context = new MessageLoggerContext())
     }
 
     Console.WriteLine("Thanks for using Message Logger!");
-    foreach (var u in users)
+    foreach (var u in context.Users)
     {
         Console.WriteLine($"{u.Name} wrote {u.Messages.Count} messages.");
     }
