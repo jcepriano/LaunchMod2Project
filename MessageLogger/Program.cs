@@ -14,6 +14,7 @@ using (var context = new MessageLoggerContext())
     Console.Write("What is your username? (one word, no spaces!) ");
     string username = Console.ReadLine();
     User user = new User(name, username);
+
     context.Users.Add(user);
     context.SaveChanges();
 
@@ -34,6 +35,8 @@ using (var context = new MessageLoggerContext())
         {
             user.Messages.Add(new Message(userInput));
             context.SaveChanges();
+
+            //var allUserMessages = context.Messages.Where(u => u.Id == user.Id).ToList();
 
             foreach (var messages in user.Messages)
             {
@@ -80,7 +83,7 @@ using (var context = new MessageLoggerContext())
             Console.Write("What is your username? ");
             username = Console.ReadLine();
             user = null;
-            foreach (var existingUser in context.Users)
+            foreach (var existingUser in context.Users.Include(u => u.Messages))
             {
                 if (existingUser.Username == username)
                 {
